@@ -16,7 +16,7 @@ import GUIPanel from './gui/GUIPanel.vue'
 const container = ref(null)
 let scene, camera, renderer
 let cubes = []
-let sphere, octahedron, floor
+let sphere, octahedron
 // 使用ref包装光源引用，以便在组件间传递
 const ambientLight = ref(null)
 const directionalLight = ref(null)
@@ -58,7 +58,7 @@ const uiState = reactive({
   },
   // 材质控制
   material: {
-    color: '#ffffff',
+    color: '#00ff00',
     transparent: false,
     opacity: 1.0,
     shininess: 30
@@ -66,15 +66,15 @@ const uiState = reactive({
   // 光源控制
   ambientLight: {
     color: '#ffffff',
-    intensity: 0.7
+    intensity: 0.5
   },
   pointLight: {
     color: '#ffffff',
     intensity: 1.0,
     position: {
-      x: 5,
-      y: 5,
-      z: 5
+      x: 10,
+      y: 10,
+      z: 10
     }
   },
   // 相机控制
@@ -343,7 +343,7 @@ const createObjects = () => {
   console.log("八面体创建完成，位置:", octahedron.position)
 
   // 创建地板
-  floor = createFloor()
+  const floor = createFloor()
   scene.add(floor)
   console.log("地板创建完成，位置:", floor.position)
 
@@ -744,23 +744,14 @@ const exposedData = {
   clearScene: () => {
     // 实现清除场景的功能
     if (scene) {
-      // 保留基本元素和原始物体引用
+      // 保留基本元素
       const basicObjects = [];
-      const originalObjects = [];
-      const lightObjects = [];
-
       scene.traverse(obj => {
         if (obj instanceof THREE.AxesHelper ||
+            obj instanceof THREE.AmbientLight ||
+            obj instanceof THREE.DirectionalLight ||
             obj instanceof THREE.GridHelper) {
           basicObjects.push(obj);
-        } else if (obj === cubes[0] || obj === sphere || obj === octahedron || obj === floor) {
-          // 保存原始物体引用，但不立即添加回场景
-          originalObjects.push(obj);
-        } else if (obj instanceof THREE.AmbientLight ||
-                 obj instanceof THREE.DirectionalLight ||
-                 obj instanceof THREE.HemisphereLight) {
-          // 光源单独处理，保存引用但不立即添加回场景
-          lightObjects.push(obj);
         }
       });
 
@@ -772,31 +763,10 @@ const exposedData = {
       // 添加回基本元素
       basicObjects.forEach(obj => scene.add(obj));
 
-      // 重新创建光源
-      const lights = createLights();
-      // 更新光源引用
-      ambientLight.value = lights.find(light => light instanceof THREE.AmbientLight);
-      directionalLight.value = lights.find(light => light instanceof THREE.DirectionalLight);
-      // 添加光源到场景
-      lights.forEach(light => scene.add(light));
-
-      // 更新UI状态中的光源值
-      uiState.ambientLight.intensity = 0.7;
-      uiState.pointLight.intensity = 1.0;
-      uiState.pointLight.position.x = 5;
-      uiState.pointLight.position.y = 5;
-      uiState.pointLight.position.z = 5;
-
-      // 不清除物体引用，只是从场景中移除
-      // cubes, sphere, octahedron 变量保持不变
-
-      // 更新GUI显示
-      if (window.updateGUIDisplay) {
-        console.log('清除场景后更新GUI显示');
-        window.updateGUIDisplay();
-      } else {
-        console.warn('无法更新GUI显示：updateGUIDisplay函数不存在');
-      }
+      // 清除引用
+      cubes = [];
+      sphere = null;
+      octahedron = null;
 
       // 重新渲染
       renderScene();
@@ -812,95 +782,12 @@ const exposedData = {
       updateCameraPosition();
 
       // 重置物体位置
-      if (sphere) {
-        sphere.position.set(3, 0, 0);
-        // 确保物体在场景中
-        if (!scene.children.includes(sphere)) {
-          scene.add(sphere);
-        }
-        // 重置物体材质
-        sphere.material.color.set('#ffffff');
-        sphere.material.transparent = false;
-        sphere.material.opacity = 1.0;
-        sphere.material.needsUpdate = true;
-      }
-
-      if (cubes.length > 0 && cubes[0]) {
-        cubes[0].position.set(0, 0, 0);
-        // 确保物体在场景中
-        if (!scene.children.includes(cubes[0])) {
-          scene.add(cubes[0]);
-        }
-        // 重置物体材质
-        cubes[0].material.color.set('#ffffff');
-        cubes[0].material.transparent = false;
-        cubes[0].material.opacity = 1.0;
-        cubes[0].material.needsUpdate = true;
-      }
-
-      if (octahedron) {
-        octahedron.position.set(-3, 0, 0);
-        // 确保物体在场景中
-        if (!scene.children.includes(octahedron)) {
-          scene.add(octahedron);
-        }
-        // 重置物体材质
-        octahedron.material.color.set('#ffffff');
-        octahedron.material.transparent = false;
-        octahedron.material.opacity = 1.0;
-        octahedron.material.needsUpdate = true;
-      }
-
-      // 确保地板在场景中
-      if (floor) {
-        if (!scene.children.includes(floor)) {
-          scene.add(floor);
-        }
-      } else {
-        // 如果地板不存在，重新创建
-        floor = createFloor();
-        scene.add(floor);
-        console.log("重新创建地板");
-      }
+      if (sphere) sphere.position.set(4, 0, 0);
+      if (cubes.length > 0) cubes[0].position.set(0, 0, 0);
+      if (octahedron) octahedron.position.set(-4, 0, 0);
 
       // 重置UI状态
-      uiState.position.x = 0;
-      uiState.position.y = 0;
-      uiState.position.z = 0;
-
-      uiState.material.color = '#ffffff';
-      uiState.material.transparent = false;
-      uiState.material.opacity = 1.0;
-      uiState.material.shininess = 30;
-
-      // 重置光源状态
-      uiState.ambientLight.color = '#ffffff';
-      uiState.ambientLight.intensity = 0.7; // 与 createLights 中的初始值保持一致
-
-      uiState.pointLight.color = '#ffffff';
-      uiState.pointLight.intensity = 1.0;
-      uiState.pointLight.position.x = 5; // 与 createLights 中的初始值保持一致
-      uiState.pointLight.position.y = 5;
-      uiState.pointLight.position.z = 5;
-
-      // 重新创建光源
-      const lights = createLights();
-      // 更新光源引用
-      ambientLight.value = lights.find(light => light instanceof THREE.AmbientLight);
-      directionalLight.value = lights.find(light => light instanceof THREE.DirectionalLight);
-      // 添加光源到场景
-      lights.forEach(light => scene.add(light));
-
-      // 同步选中物体的位置
       syncObjectPosition();
-
-      // 更新GUI显示
-      if (window.updateGUIDisplay) {
-        console.log('重置默认值后更新GUI显示');
-        window.updateGUIDisplay();
-      } else {
-        console.warn('无法更新GUI显示：updateGUIDisplay函数不存在');
-      }
 
       // 重新渲染
       renderScene();

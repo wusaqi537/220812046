@@ -8,7 +8,22 @@ const routes = [
   {
     path: '/main-scene',
     name: 'MainScene',
-    component: () => import('../views/MainSceneView.vue')
+    component: () => import('../scenes/main-scene/MainScene.vue')
+  },
+  {
+    path: '/spline-curve',
+    name: 'SplineCurveScene',
+    component: () => import('../scenes/spline-curve/SplineCurveScene.vue')
+  },
+  {
+    path: '/curve-path',
+    name: 'CurvePathScene',
+    component: () => import('../scenes/curve-path/CurvePathScene.vue')
+  },
+  {
+    path: '/terrain',
+    name: 'TerrainScene',
+    component: () => import('../scenes/terrain-scene/TerrainScene.vue')
   }
 ]
 
@@ -17,4 +32,4 @@ const router = createRouter({
   routes
 })
 
-export default router 
+export default router

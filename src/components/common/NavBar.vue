@@ -7,6 +7,11 @@ const route = useRoute()
 <template>
   <nav class="navbar">
     <div class="navbar-brand">3D场景</div>
+    <div class="navbar-links">
+      <router-link to="/main-scene">主场景</router-link>
+      <router-link to="/spline-curve">样条曲线</router-link>
+      <router-link to="/curve-path">曲线路径</router-link>
+    </div>
   </nav>
 </template>
 
@@ -18,7 +23,7 @@ const route = useRoute()
   width: 100%;
   height: 50px;
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
   padding: 0 20px;
   background-color: rgba(20, 20, 35, 0.8);
@@ -32,4 +37,25 @@ const route = useRoute()
   font-weight: bold;
   color: white;
 }
-</style> 
+
+.navbar-links {
+  display: flex;
+  gap: 20px;
+}
+
+.navbar-links a {
+  color: white;
+  text-decoration: none;
+  font-size: 16px;
+  transition: color 0.3s;
+}
+
+.navbar-links a:hover {
+  color: #42b983;
+}
+
+.navbar-links a.router-link-active {
+  color: #42b983;
+  border-bottom: 2px solid #42b983;
+}
+</style>

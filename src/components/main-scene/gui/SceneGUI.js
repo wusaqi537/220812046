@@ -8,10 +8,6 @@ let renderer_ref = null;
 let scene_ref = null;
 let camera_ref = null;
 
-// 全局变量，用于保存光源引用
-let ambientLight_ref = null;
-let directionalLight_ref = null;
-
 // 创建GUI
 export function createGUI(options) {
   const {
@@ -28,15 +24,6 @@ export function createGUI(options) {
     camera,
     renderer
   } = options
-
-  // 保存光源引用到全局变量
-  ambientLight_ref = ambientLight;
-  directionalLight_ref = directionalLight;
-
-  // 保存场景和渲染器引用
-  scene_ref = scene;
-  camera_ref = camera;
-  renderer_ref = renderer;
 
   // 创建单独的GUI实例
   const gui = new GUI({
@@ -224,90 +211,69 @@ export function createGUI(options) {
   // 环境光控制
   const ambientLightFolder = lightControls.addFolder('环境光');
   ambientLightFolder.addColor(uiState.ambientLight, 'color').name('颜色').onChange((value) => {
-    if (ambientLight_ref) {
-      ambientLight_ref.color.set(value);
-      console.log('更新环境光颜色为:', value);
+    if (ambientLight) {
+      ambientLight.color.set(value);
       if (renderer && scene && camera) {
         renderer.render(scene, camera);
       }
-    } else {
-      console.warn('环境光引用不存在，无法更新颜色');
     }
   });
 
   ambientLightFolder.add(uiState.ambientLight, 'intensity', 0, 2, 0.1).name('强度').onChange((value) => {
-    if (ambientLight_ref) {
-      ambientLight_ref.intensity = value;
-      console.log('更新环境光强度为:', value);
+    if (ambientLight) {
+      ambientLight.intensity = value;
       if (renderer && scene && camera) {
         renderer.render(scene, camera);
       }
-    } else {
-      console.warn('环境光引用不存在，无法更新强度');
     }
   });
 
   // 方向光控制
   const directionalLightFolder = lightControls.addFolder('方向光');
   directionalLightFolder.addColor(uiState.pointLight, 'color').name('颜色').onChange((value) => {
-    if (directionalLight_ref) {
-      directionalLight_ref.color.set(value);
-      console.log('更新方向光颜色为:', value);
+    if (directionalLight) {
+      directionalLight.color.set(value);
       if (renderer && scene && camera) {
         renderer.render(scene, camera);
       }
-    } else {
-      console.warn('方向光引用不存在，无法更新颜色');
     }
   });
 
   directionalLightFolder.add(uiState.pointLight, 'intensity', 0, 2, 0.1).name('强度').onChange((value) => {
-    if (directionalLight_ref) {
-      directionalLight_ref.intensity = value;
-      console.log('更新方向光强度为:', value);
+    if (directionalLight) {
+      directionalLight.intensity = value;
       if (renderer && scene && camera) {
         renderer.render(scene, camera);
       }
-    } else {
-      console.warn('方向光引用不存在，无法更新强度');
     }
   });
 
   // 方向光位置控制
   const directionalLightPosition = directionalLightFolder.addFolder('位置');
   directionalLightPosition.add(uiState.pointLight.position, 'x', -20, 20, 1).name('X').onChange((value) => {
-    if (directionalLight_ref) {
-      directionalLight_ref.position.x = value;
-      console.log('更新方向光X位置为:', value);
+    if (directionalLight) {
+      directionalLight.position.x = value;
       if (renderer && scene && camera) {
         renderer.render(scene, camera);
       }
-    } else {
-      console.warn('方向光引用不存在，无法更新X位置');
     }
   });
 
   directionalLightPosition.add(uiState.pointLight.position, 'y', -20, 20, 1).name('Y').onChange((value) => {
-    if (directionalLight_ref) {
-      directionalLight_ref.position.y = value;
-      console.log('更新方向光Y位置为:', value);
+    if (directionalLight) {
+      directionalLight.position.y = value;
       if (renderer && scene && camera) {
         renderer.render(scene, camera);
       }
-    } else {
-      console.warn('方向光引用不存在，无法更新Y位置');
     }
   });
 
   directionalLightPosition.add(uiState.pointLight.position, 'z', -20, 20, 1).name('Z').onChange((value) => {
-    if (directionalLight_ref) {
-      directionalLight_ref.position.z = value;
-      console.log('更新方向光Z位置为:', value);
+    if (directionalLight) {
+      directionalLight.position.z = value;
       if (renderer && scene && camera) {
         renderer.render(scene, camera);
       }
-    } else {
-      console.warn('方向光引用不存在，无法更新Z位置');
     }
   });
 
@@ -823,12 +789,7 @@ export function initGUI(uiState) {
     setDefault: window.setDefault || (() => {}),
     startAnimation: window.startAnimation || (() => {}),
     stopAnimation: window.stopAnimation || (() => {}),
-    updateObjectProperties: window.updateObjectProperties || (() => {}),
-    ambientLight: window.threeSceneData?.ambientLight?.value,
-    directionalLight: window.threeSceneData?.directionalLight?.value,
-    scene: window.threeSceneData?.scene,
-    camera: window.threeSceneData?.camera,
-    renderer: window.threeSceneData?.renderer
+    updateObjectProperties: window.updateObjectProperties || (() => {})
   };
 
   // 创建GUI实例
