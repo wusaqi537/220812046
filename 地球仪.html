@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>主场景</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+        .three-container {
+            width: 100vw;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: #000000;
+            z-index: 1;
+        }
+        .lil-gui {
+            --width: 250px;
+            --name-width: 40%;
+            --font-size: 12px;
+            --input-font-size: 12px;
+            --widget-height: 24px;
+            --spacing: 4px;
+            --background-color: rgba(0, 0, 0, 0.8);
+            --widget-color: #1a1a1a;
+            --hover-color: #444;
+            --focus-color: #2a2a2a;
+            --number-color: #4CAF50;
+            --title-background-color: #1a1a1a;
+            border: 1px solid #444 !important;
+            border-radius: 4px;
+            text-shadow: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="container" class="three-container"></div>
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+                "three/examples/jsm/": "https://unpkg.com/three@0.160.0/examples/jsm/",
+                "lil-gui": "https://cdn.jsdelivr.net/npm/lil-gui@0.19.1/dist/lil-gui.esm.min.js"
+            }
+        }
+    </script>
+    <script type="module" src="main.js"></script>
+</body>
+</html> 
