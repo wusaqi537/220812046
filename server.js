@@ -65,5 +65,6 @@ server.listen(port, () => {
     console.log('- 隧道场景：\x1b[34mhttp://localhost:' + port + '/无限隧道.html\x1b[0m');
     console.log('- 粒子效果：\x1b[34mhttp://localhost:' + port + '/粒子效果.html\x1b[0m');
     console.log('- 柱状图：\x1b[34mhttp://localhost:' + port + '/柱状图.html\x1b[0m');
+    console.log('- 3D模型：\x1b[34mhttp://localhost:' + port + '/模型展示.html\x1b[0m');
     console.log('\x1b[33m%s\x1b[0m', '提示：请确保所有 HTML 文件都在当前目录下');
 }); 

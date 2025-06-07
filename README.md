@@ -17,7 +17,8 @@
 ![随机地形](screenshots/随机地形山脉.png)
 
 ### 无限隧道
-![无限隧道](screenshots/无限隧道.png)
+![无限隧道](screenshots/无限隧道1.png)
+![无限隧道](screenshots/无限隧道2.png)
 
 
 ## 项目结构
