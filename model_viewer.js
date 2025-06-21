@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { GUI } from 'lil-gui';
 
 // 创建场景
 const scene = new THREE.Scene();
@@ -50,6 +51,12 @@ let isWireframe = false;
 // 创建动画混合器
 let mixer = null;
 const clock = new THREE.Clock();  // 用于计算动画delta时间
+
+// 动画相关
+let gui;
+let model, clips;
+let activeAction;
+const animations = {};
 
 // 存储需要更新的对象
 let modelGroup = {
@@ -105,21 +112,35 @@ loader.load(
         // 设置动画
         if (gltf.animations && gltf.animations.length > 0) {
             mixer = new THREE.AnimationMixer(model);
+            clips = gltf.animations;
+            
+            gui = new GUI();
+            const animationsFolder = gui.addFolder('动画');
             
             // 查找idle动画
-            const idleAnimation = gltf.animations.find(anim => anim.name.toLowerCase().includes('idle'));
+            const idleAnimation = clips.find(anim => anim.name.toLowerCase().includes('idle')) || clips[0];
             
-            if (idleAnimation) {
-                // 如果找到idle动画，只播放这个
-                const action = mixer.clipAction(idleAnimation);
-                action.play();
-            } else {
-                // 如果没有找到idle动画，播放第一个动画
-                const action = mixer.clipAction(gltf.animations[0]);
-                action.play();
+            for (const clip of clips) {
+                const action = mixer.clipAction(clip);
+                animations[clip.name] = action;
             }
+
+            animations.current = idleAnimation.name;
+            activeAction = animations[animations.current];
+            activeAction.play();
             
-            console.log('可用动画:', gltf.animations.map(a => a.name));
+            animationsFolder.add(animations, 'current', Object.keys(animations).filter(n => n !== 'current')).name('选择动画').onChange(function (name) {
+                const newAction = animations[name];
+                if (newAction) {
+                    activeAction.fadeOut(0.5);
+                    newAction.reset().fadeIn(0.5).play();
+                    activeAction = newAction;
+                }
+            });
+
+            animationsFolder.open();
+            
+            console.log('可用动画:', clips.map(a => a.name));
         }
         
         // 隐藏进度条
@@ -156,14 +177,14 @@ function updateBoundingBox() {
     const center = new THREE.Vector3();
     modelGroup.box.getCenter(center);
 
-    console.log('包围盒信息:', {
+    /* console.log('包围盒信息:', {
         size: size.toArray(),
         center: center.toArray(),
         modelPosition: modelGroup.model.position.toArray(),
         modelScale: modelGroup.model.scale.toArray(),
         min: modelGroup.box.min.toArray(),
         max: modelGroup.box.max.toArray()
-    });
+    }); */
 
     // 更新包围盒网格
     if (!modelGroup.boxMesh) {
@@ -249,16 +270,18 @@ function onWindowResize() {
 // 动画循环
 function animate() {
     requestAnimationFrame(animate);
-    
+
+    // 更新控制器
+    controls.update();
+
+    // 更新动画混合器
     if (mixer) {
-        const delta = clock.getDelta();
-        mixer.update(delta);
-        
-        // 在每次动画更新后立即更新包围盒
+        mixer.update(clock.getDelta());
+        // 更新包围盒以匹配动画
         updateBoundingBox();
     }
-    
-    controls.update();
+
+    // 渲染场景
     renderer.render(scene, camera);
 }
 

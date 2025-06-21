@@ -20,6 +20,8 @@
 ![无限隧道](screenshots/无限隧道1.png)
 ![无限隧道](screenshots/无限隧道2.png)
 
+### 3D模型与动画控制
+![3D模型与动画控制](screenshots/模型展示.png)
 
 ## 项目结构
 ```
@@ -31,6 +33,7 @@ project/
 ├── 无限隧道.html      # 隧道场景
 ├── 粒子效果.html      # 粒子效果场景
 ├── 柱状图.html        # 柱状图场景
+├── 模型展示.html      # 3D模型与动画控制
 ├── screenshots/      # 截图文件夹
 └── assets/           # 资源文件夹
     └── models/       # 3D模型文件夹
@@ -55,6 +58,7 @@ node server.js
 - 隧道场景：`http://localhost:3000/无限隧道.html`
 - 粒子效果：`http://localhost:3000/粒子效果.html`
 - 柱状图：`http://localhost:3000/柱状图.html`
+- 模型展示：`http://localhost:3000/模型展示.html`
 
 ## 技术栈
 - Three.js
